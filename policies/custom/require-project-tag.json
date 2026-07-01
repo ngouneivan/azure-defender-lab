@@ -1,0 +1,15 @@
+﻿{
+  "properties": {
+    "displayName": "Lab - Exiger le tag Project sur les Resource Groups",
+    "mode": "All",
+    "policyRule": {
+      "if": {
+        "allOf": [
+          { "field": "type", "equals": "Microsoft.Resources/subscriptions/resourceGroups" },
+          { "field": "tags[Project]", "exists": "false" }
+        ]
+      },
+      "then": { "effect": "deny" }
+    }
+  }
+}

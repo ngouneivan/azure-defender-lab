@@ -1,0 +1,7 @@
+﻿// Alertes Defender for Cloud (24h)
+// Utiliser en phase 05 apres avoir declenche des alertes
+SecurityAlert
+| where TimeGenerated > ago(24h)
+| where ProductName contains 'Defender' or ProductName contains 'Azure Security Center'
+| project TimeGenerated, AlertName, AlertSeverity, Description, CompromisedEntity
+| order by TimeGenerated desc

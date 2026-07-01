@@ -1,0 +1,10 @@
+﻿// Recommendations actives classees par severite
+// Utiliser en phase 04 pour prioriser la remediation
+SecurityRecommendation
+| where TimeGenerated > ago(24h)
+| where RecommendationState == 'Active'
+| summarize Count = count(), Resources = dcount(Id)
+  by RecommendationSeverity, RecommendationDisplayName
+| order by
+    case(RecommendationSeverity, 'High', 1, 'Medium', 2, 'Low', 3, 4) asc,
+    Count desc

@@ -1,0 +1,11 @@
+﻿// Conformite par framework reglementaire
+// Utiliser en phase 06 apres avoir assigne CIS + NIST
+SecurityRegulatoryCompliance
+| where TimeGenerated > ago(7d)
+| summarize
+    Passed  = countif(State == 'Passed'),
+    Failed  = countif(State == 'Failed'),
+    Skipped = countif(State == 'Skipped')
+  by ComplianceStandard = StandardName
+| extend PassRate = round(todouble(Passed) / (Passed + Failed) * 100, 1)
+| order by PassRate asc

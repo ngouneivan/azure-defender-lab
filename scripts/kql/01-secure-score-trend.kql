@@ -1,0 +1,7 @@
+﻿// Tendance Secure Score sur 30 jours
+// Utiliser en phase 03 (baseline) et phase 04 (suivi apres remediation)
+SecureScores
+| where TimeGenerated > ago(30d)
+| project TimeGenerated, DisplayName, CurrentScore, MaxScore,
+          Percentage = round(todouble(CurrentScore) / todouble(MaxScore) * 100, 1)
+| order by TimeGenerated desc
