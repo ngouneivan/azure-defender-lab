@@ -1,37 +1,55 @@
-﻿# Guide 01 - Prerequis
+﻿# Guide 01 — Prérequis
 
-> Statut : A REMPLIR lors de la session 01
-> Duree estimee : 30 min
+> **Statut** : TERMINÉ ✅
+> **Date** : 2025-XX-XX
 
-## Objectif
-Verifier que l'environnement est pret avant de toucher a Azure.
+## Résultat
 
-## Checklist
+Tous les prérequis validés avant d'activer les plans Defender for Cloud.
 
-### Acces Azure
-- [ ] Abonnement actif
-- [ ] Role Owner ou Contributor + Security Admin
-- [ ] az login && az account show OK
+## Checklist complétée
 
-### Outils locaux
-- [ ] Azure CLI (az --version)
-- [ ] Terraform >= 1.6.0 (terraform --version)
-- [ ] PowerShell 7+ avec module Az.Security
+### Accès Azure
+- [x] Subscription active : Azure subscription 1 (512817a3-87c7-4af5-a7ea-829b55885255)
+- [x] Module Az PowerShell installé (AllUsers — permanent sur le PC)
+- [x] Connexion Azure validée (Connect-AzAccount)
+
+### Providers Azure enregistrés
+- [x] Microsoft.Security    → Registered
+- [x] Microsoft.PolicyInsights → Registered
+- [x] Microsoft.Insights    → Registered
 
 ### Lab Sentinel existant
-- [ ] Log Analytics Workspace ID note
-- [ ] Microsoft Sentinel actif sur le WS
-- [ ] DC-01 visible dans Azure Arc
+- [x] Log Analytics Workspace identifié : law-sentinel-lab
+- [x] Resource Group : rg-sentinel-lab
+- [x] ResourceId complet récupéré et renseigné dans terraform/variables.tf
 
-## Variables a noter pour terraform/variables.tf
-subscription_id = ""
-workspace_id    = ""
-workspace_name  = ""
+## Variables renseignées dans terraform/variables.tf
 
-## Commandes de verification
+| Variable | Valeur |
+|----------|--------|
+| subscription_id | 512817a3-87c7-4af5-a7ea-829b55885255 |
+| workspace_name | law-sentinel-lab |
+| workspace_id | /subscriptions/512817a3.../workspaces/law-sentinel-lab |
+
+## Commandes utilisées
+
 ```powershell
-Connect-AzAccount
+# Vérification subscription
 Get-AzSubscription | Select-Object Name, Id, State
+
+# Récupération workspace Sentinel existant
+$ws = Get-AzOperationalInsightsWorkspace -Name "law-sentinel-lab" -ResourceGroupName "rg-sentinel-lab"
+Write-Host "workspace_id = $($ws.ResourceId)"
+
+# Enregistrement des providers
 Register-AzResourceProvider -ProviderNamespace Microsoft.Security
 Register-AzResourceProvider -ProviderNamespace Microsoft.PolicyInsights
+Register-AzResourceProvider -ProviderNamespace Microsoft.Insights
 ```
+
+## Problèmes rencontrés
+
+- Module Az non installé au départ → Install-Module -Name Az -Scope AllUsers -Force
+- Get-AzRoleAssignment -SignInName KO sur compte Microsoft personnel
+  → Contournement : Get-AzRoleAssignment -Scope "/subscriptions/..."
